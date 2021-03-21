@@ -1,0 +1,17 @@
+{
+    "name": "WhiteSparrow.Integrations.QC.Editor",
+    "references": [
+        "WhiteSparrow.Integrations.QC",
+        "QFSW.QC",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
