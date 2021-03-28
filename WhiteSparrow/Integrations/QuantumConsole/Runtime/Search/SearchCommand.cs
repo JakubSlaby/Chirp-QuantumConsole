@@ -33,7 +33,7 @@ namespace WhiteSparrow.Integrations.QC.Search
 			}
 			else
 			{
-				context.Console.LogToConsole(ChirpConsoleUtils.WrapTextColorByLevel("Search requires ChirpQuantumConsole.", LogType.Error));
+				context.Console.LogToConsole(ChirpConsoleUtils.WrapTextColorByLevel("Search requires ChirpQuantumConsole.", LogType.Error, context.Console.Theme));
 			}
 		}
 

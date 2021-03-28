@@ -5,36 +5,35 @@ using WhiteSparrow.Integrations.QC.Logging;
 
 namespace WhiteSparrow.Integrations.QC.Search
 {
-	public class SearchLogExtension : AbstractLogExtension
+	public class SearchLogExtension : AbstractLogStorageExtension
 	{
-		private string _searchTerm;
+		private string m_SearchTerm;
 		public string SearchTerm
 		{
-			get => _searchTerm;
+			get => m_SearchTerm;
 			set
 			{
-				_searchTerm = value;
-				_searchLogFormatter.SearchTerm = value;
+				m_SearchTerm = value;
+				m_SearchLogFormatter.SearchTerm = value;
 			}
 		}
 
-		private SearchLogFormatter _searchLogFormatter;
+		private SearchLogFormatter m_SearchLogFormatter = new SearchLogFormatter();
 
-		protected override ILogFormatter CreateLogFormatter()
-		{
-			return _searchLogFormatter = new SearchLogFormatter();
-		}
+		protected override ILogFormatter LogFormatter => m_SearchLogFormatter;
+
+		
 
 		protected override bool FilterLog(ILog log)
 		{
 			if (log is DetailedLog detailedLog)
 			{
-				return CultureInfo.CurrentCulture.CompareInfo.IndexOf(detailedLog.TextRaw, _searchTerm,
+				return CultureInfo.CurrentCulture.CompareInfo.IndexOf(detailedLog.TextRaw, m_SearchTerm,
 					CompareOptions.IgnoreCase | CompareOptions.IgnoreSymbols) != -1;
 			}
 			
 			return CultureInfo.CurrentCulture.CompareInfo.IndexOf(ChirpConsoleUtils.StripTags(log.Text), 
-				_searchTerm, CompareOptions.IgnoreCase | CompareOptions.IgnoreSymbols) != -1;
+				m_SearchTerm, CompareOptions.IgnoreCase | CompareOptions.IgnoreSymbols) != -1;
 		}
 	}
 }

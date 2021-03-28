@@ -1,39 +1,46 @@
 ﻿using System.Collections.Generic;
 using QFSW.QC;
+using WhiteSparrow.Integrations.QC.Formatting;
 
 namespace WhiteSparrow.Integrations.QC.Logging
 {
 	public class LogExtensionContainer : ILogStorage
 	{
+		public class DefaultStorage : AbstractLogStorage
+		{
+			
+		}
 		
-		private int _maxStoredLogs = -1;
+		private int m_MaxStoredLogs = -1;
 		public int MaxStoredLogs
 		{
-			get => _maxStoredLogs;
+			get => m_MaxStoredLogs;
 			set
 			{
-				_maxStoredLogs = value;
-				foreach (var storage in _logStorageStack)
+				m_MaxStoredLogs = value;
+				foreach (var storage in m_LogStorageStack)
 				{
 					storage.MaxStoredLogs = value;
 				}
 			}
 		}
 
-		private ILogStorage _defaultStorage;
-		private Stack<ILogStorage> _logStorageStack;
-		private ILogStorage _activeStorage;
+		private ILogStorage m_DefaultStorage;
+		private Stack<ILogStorage> m_LogStorageStack;
+		private ILogStorage m_ActiveStorage;
 
-		public LogExtensionContainer(ILogStorage defaultLogStorage)
+		public LogExtensionContainer(int maxStoredLogs)
 		{
-			_logStorageStack = new Stack<ILogStorage>();
-			_logStorageStack.Push(_defaultStorage = defaultLogStorage);
-			_activeStorage = _defaultStorage;
+			m_LogStorageStack = new Stack<ILogStorage>();
+			m_LogStorageStack.Push(m_DefaultStorage = new DefaultStorage(){ MaxStoredLogs = maxStoredLogs});
+			m_ActiveStorage = m_DefaultStorage;
 		}
-		
+
+		public IReadOnlyList<ILog> Logs => m_DefaultStorage.Logs;
+
 		public void AddLog(ILog log)
 		{
-			foreach (var storage in _logStorageStack)
+			foreach (var storage in m_LogStorageStack)
 			{
 				storage.AddLog(log);
 			}
@@ -41,61 +48,57 @@ namespace WhiteSparrow.Integrations.QC.Logging
 
 		public void RemoveLog()
 		{
-			_defaultStorage.RemoveLog();
+			m_DefaultStorage.RemoveLog();
 		}
 
 		public void Clear()
 		{
-			foreach (var storage in _logStorageStack)
+			foreach (var storage in m_LogStorageStack)
 			{
 				storage.Clear();
 			}
+			ClearLogOverwrites();
 		}
 
 		public string GetLogString()
 		{
-			return _logStorageStack.Peek().GetLogString();
-		}
-
-		public IReadOnlyList<ILog> GetLogs()
-		{
-			return _defaultStorage.GetLogs();
+			return m_LogStorageStack.Peek().GetLogString();
 		}
 
 		public void ClearLogOverwrites()
 		{
-			while (_logStorageStack.Count > 1)
+			while (m_LogStorageStack.Count > 1)
 			{
 				PopLogOverwrite();
 			}
 		}
 		public void PushLogOverwrite(ILogStorage logStorage)
 		{
-			if (_logStorageStack.Contains(logStorage))
+			if (m_LogStorageStack.Contains(logStorage))
 			{
 				return;
 			}
 
-			logStorage.MaxStoredLogs = _maxStoredLogs;
-			_logStorageStack.Push(logStorage);
+			logStorage.MaxStoredLogs = m_MaxStoredLogs;
+			m_LogStorageStack.Push(logStorage);
 			if (logStorage is ILogStorageExtension logOverwrite)
 			{
 				logOverwrite.Activate();
-				logOverwrite.IngestLogs(_defaultStorage.GetLogs());
+				logOverwrite.IngestLogs(m_DefaultStorage.Logs);
 			}
 
-			_activeStorage = logStorage;
+			m_ActiveStorage = logStorage;
 		}
 
 		public ILogStorage PopLogOverwrite()
 		{
-			if (_logStorageStack.Count == 1)
+			if (m_LogStorageStack.Count == 1)
 			{
 				return null;
 			}
 			
-			var pop = _logStorageStack.Pop();
-			_activeStorage = _logStorageStack.Peek();
+			var pop = m_LogStorageStack.Pop();
+			m_ActiveStorage = m_LogStorageStack.Peek();
 			if (pop is ILogStorageExtension logOverwrite)
 			{
 				logOverwrite.Deactivate();
@@ -106,7 +109,7 @@ namespace WhiteSparrow.Integrations.QC.Logging
 
 		public ILogStorage GetActiveLogStorage()
 		{
-			return _activeStorage;
+			return m_ActiveStorage;
 		}
 
 		public ILog FindLog()

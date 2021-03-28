@@ -6,9 +6,15 @@ using QFSW.QC;
 
 namespace WhiteSparrow.Integrations.QC.Logging
 {
-	public abstract class AbstractLogExtension : LogExtensionStorage, ILogStorageExtension
+	public interface ILogStorageExtension : ILogStorage
 	{
-		
+		void Activate();
+		void Deactivate();
+		void IngestLogs(IEnumerable<ILog> logs);
+	}
+	
+	public abstract class AbstractLogStorageExtension : AbstractLogStorage, ILogStorageExtension
+	{
 		public virtual void Activate()
 		{
 		}

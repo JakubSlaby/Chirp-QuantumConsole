@@ -20,9 +20,13 @@ namespace WhiteSparrow.Integrations.QC.LogDetails
 			int characterClosest = TMP_TextUtilities.FindNearestCharacterOnLine(_textComponent, eventData.position, line, null, true);
 
 			string strippedText = ChirpConsoleUtils.StripTags(_textComponent.text);
-			
-			
-			Debug.Log($"Selected line: {line}, character: {characterClosest}");
+			Debug.Log($"{_textComponent.text.Length} = {strippedText.Length}");
+			int logLine = ChirpConsoleUtils.CountLineBreaks(strippedText, 0, characterClosest);
+
+			var log = _chirpQuantumConsole.FindLog(logLine);
+			if (log == null)
+				return;
+			_chirpQuantumConsole.ShowLogDetails(log);
 		}
 
 #if UNITY_EDITOR

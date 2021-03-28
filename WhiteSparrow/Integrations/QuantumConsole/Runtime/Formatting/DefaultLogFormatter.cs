@@ -15,7 +15,8 @@ namespace WhiteSparrow.Integrations.QC.Formatting
 	
 	public class DefaultLogFormatter : ILogFormatter
 	{
-		private static StringBuilder _formattedLogBuilder = new StringBuilder();
+		public static DefaultLogFormatter Instance { get; } = new DefaultLogFormatter();
+		private static StringBuilder m_StringBuilder = new StringBuilder();
 		
 		public string Format(ILog log)
 		{
@@ -34,7 +35,7 @@ namespace WhiteSparrow.Integrations.QC.Formatting
 		
 		public string Format(DetailedLog log)
 		{
-			var stringBuilder = _formattedLogBuilder.Clear();
+			var stringBuilder = m_StringBuilder.Clear();
 			
 			// metadata
 			if (FormatMetadata(stringBuilder, log))
@@ -46,7 +47,7 @@ namespace WhiteSparrow.Integrations.QC.Formatting
 		}
 		private string _Format(ILog log)
 		{
-			var stringBuilder = _formattedLogBuilder.Clear();
+			var stringBuilder = m_StringBuilder.Clear();
 			FormatLogText(stringBuilder, log);
 			return stringBuilder.ToString();
 		}
@@ -92,7 +93,7 @@ namespace WhiteSparrow.Integrations.QC.Formatting
 
 		protected virtual string FormatLogString(DetailedLog log, string logText)
 		{
-			return ChirpConsoleUtils.WrapTextColorByLevel(logText, log.Type);
+			return ChirpConsoleUtils.WrapTextColorByLevel(logText, log.Type, null);
 		}
 
 		protected virtual void FormatLogText(StringBuilder stringBuilder, ILog log)
