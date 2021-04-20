@@ -46,6 +46,10 @@ namespace WhiteSparrow.Integrations.QC.Logging
 					return false;
 				if (lastLog.StackTrace != log.StackTrace)
 					return false;
+#if CHIRP
+				if (!lastLog.Channel.Equals(log.Channel))
+					return false;
+#endif
 				
 				m_Storage.RemoveLog();
 				lastLog.RepeatCount++;

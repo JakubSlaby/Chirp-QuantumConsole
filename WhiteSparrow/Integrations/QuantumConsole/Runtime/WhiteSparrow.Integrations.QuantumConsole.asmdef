@@ -2,7 +2,8 @@
     "name": "WhiteSparrow.Integrations.QC",
     "references": [
         "QFSW.QC",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "WhiteSparrow.Logging"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

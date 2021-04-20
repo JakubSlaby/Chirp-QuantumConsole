@@ -1,4 +1,5 @@
 ﻿using QFSW.QC;
+using QFSW.QC.Utilities;
 using UnityEngine;
 using WhiteSparrow.Integrations.QC.LogDetails;
 using WhiteSparrow.Integrations.QC.Logging;
@@ -23,10 +24,32 @@ namespace WhiteSparrow.Integrations.QC
 
 		protected override ILog ConstructDebugLog(string condition, string stackTrace, LogType type, bool prependTimeStamp, bool appendStackTrace)
 		{
+			if (Theme)
+			{
+				switch (type)
+				{
+					case LogType.Warning:
+					{
+						condition = ColorExtensions.ColorText(condition, Theme.WarningColor);
+						break;
+					}
+					case LogType.Error: 
+					case LogType.Assert:
+					case LogType.Exception:
+					{
+						condition = ColorExtensions.ColorText(condition, Theme.ErrorColor);
+						break;
+					}
+				}
+			}
+			
 			return new DetailedLog(condition, true)
 			{
 				Type = type,
-				StackTrace = appendStackTrace ? stackTrace : null
+				StackTrace = appendStackTrace ? stackTrace : null,
+#if CHIRP
+				Channel = "Unity"
+#endif
 			};
 		}
 

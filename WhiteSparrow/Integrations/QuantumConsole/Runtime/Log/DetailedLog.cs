@@ -1,5 +1,6 @@
 ﻿using QFSW.QC;
 using UnityEngine;
+using WhiteSparrow.Shared.Logging;
 
 namespace WhiteSparrow.Integrations.QC.Logging
 {
@@ -37,6 +38,10 @@ namespace WhiteSparrow.Integrations.QC.Logging
 		
 		public int RepeatCount { get; set; }
 
+#if CHIRP
+		public LogChannel Channel;
+#endif
+
 		public DetailedLog(string textRaw, bool newLine = true)
 		{
 			_textRaw = textRaw;
@@ -45,6 +50,9 @@ namespace WhiteSparrow.Integrations.QC.Logging
 			NewLine = newLine;
 			RepeatCount = 0;
 			StackTrace = null;
+#if CHIRP
+			Channel = null;
+#endif
 		}
 	}
 }
