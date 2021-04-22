@@ -56,7 +56,9 @@ namespace WhiteSparrow.Integrations.QC.Formatting
 		{
 			bool metadata = false;
 
+			#if CHIRP
 			metadata |= FormatChannel(stringBuilder, log);
+			#endif
 			metadata |= FormatRepeatCount(stringBuilder, log);
 
 			return metadata;
@@ -67,12 +69,15 @@ namespace WhiteSparrow.Integrations.QC.Formatting
 			stringBuilder.Append(' ');
 		}
 
-
+#if CHIRP
 		protected virtual bool FormatChannel(StringBuilder stringBuilder, DetailedLog log)
 		{
-			// TODO: When channels are added
-			return false;
+			stringBuilder.Append('[');
+			stringBuilder.Append(ColorExtensions.ColorText(log.Channel.name, Color.cyan));
+			stringBuilder.Append(']');
+			return true;
 		}
+#endif
 
 		protected virtual bool FormatRepeatCount(StringBuilder stringBuilder, DetailedLog log)
 		{
@@ -93,7 +98,7 @@ namespace WhiteSparrow.Integrations.QC.Formatting
 
 		protected virtual string FormatLogString(DetailedLog log, string logText)
 		{
-			return ChirpConsoleUtils.WrapTextColorByLevel(logText, log.Type, null);
+			return ChirpConsoleUtils.WrapTextColorByLevel(logText, log.Type, QuantumConsole.Instance.Theme);
 		}
 
 		protected virtual void FormatLogText(StringBuilder stringBuilder, ILog log)
