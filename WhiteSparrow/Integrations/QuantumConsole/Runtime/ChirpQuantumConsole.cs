@@ -4,22 +4,32 @@ using UnityEngine;
 using WhiteSparrow.Integrations.QC.LogDetails;
 using WhiteSparrow.Integrations.QC.Logging;
 using WhiteSparrow.Integrations.QC.Search;
+#if CHIRP
+using System.Collections.Generic;
+using System.Reflection;
+using WhiteSparrow.Shared.Logging;
+#endif
 
 namespace WhiteSparrow.Integrations.QC
 {
 	public class ChirpQuantumConsole : QFSW.QC.QuantumConsole
 	{
-		private LogExtensionContainer _extensionContainer;
-		internal LogExtensionContainer ExtensionContainer => _extensionContainer;
+		private LogExtensionContainer m_ExtensionContainer;
+		internal LogExtensionContainer ExtensionContainer => m_ExtensionContainer;
 
-		private SearchLogExtension _extensionSearch;
-		private LogDetailsExtension _extensionLogDetails;
-		
+		private SearchLogExtension m_ExtensionSearch;
+		private LogDetailsExtension m_ExtensionLogDetails;
+#if CHIRP
+		private ChannelFilterLogExtension m_ExtensionChannelFilter;
+#endif
 		protected override ILogStorage CreateLogStorage()
 		{
-			_extensionSearch = new SearchLogExtension();
-			_extensionLogDetails = new LogDetailsExtension();
-			return _extensionContainer = new LogExtensionContainer(MaxStoredLogs);
+			m_ExtensionSearch = new SearchLogExtension();
+			m_ExtensionLogDetails = new LogDetailsExtension();
+#if CHIRP
+			m_ExtensionChannelFilter = new ChannelFilterLogExtension();
+#endif
+			return m_ExtensionContainer = new LogExtensionContainer(MaxStoredLogs);
 		}
 
 		protected override ILog ConstructDebugLog(string condition, string stackTrace, LogType type, bool prependTimeStamp, bool appendStackTrace)
@@ -55,15 +65,15 @@ namespace WhiteSparrow.Integrations.QC
 
 		public void Search(string searchTerm)
 		{
-			_extensionContainer.ClearLogOverwrites();
-			_extensionSearch.SearchTerm = searchTerm;
-			_extensionContainer.PushLogOverwrite(_extensionSearch);
+			m_ExtensionContainer.ClearLogOverwrites();
+			m_ExtensionSearch.SearchTerm = searchTerm;
+			m_ExtensionContainer.PushLogOverwrite(m_ExtensionSearch);
 			RequireFlush();
 		}
 
 		internal ILog FindLog(int line)
 		{
-			var activeLogStorage = _extensionContainer.GetActiveLogStorage();
+			var activeLogStorage = m_ExtensionContainer.GetActiveLogStorage();
 			var logs = activeLogStorage.Logs;
 			if (logs.Count == 0)
 				return null;
@@ -86,14 +96,63 @@ namespace WhiteSparrow.Integrations.QC
 		
 		public void ShowLogDetails(ILog log)
 		{
-			_extensionLogDetails.FocusedLog = log;
-			_extensionContainer.PushLogOverwrite(_extensionLogDetails);
+			m_ExtensionLogDetails.FocusedLog = log;
+			m_ExtensionContainer.PushLogOverwrite(m_ExtensionLogDetails);
 			RequireFlush();
 		}
 
+#if CHIRP
+		private HashSet<string> m_RegisteredFilterChannels = new HashSet<string>();
+		private CommandData m_FilterCommandData;
+		private MethodInfo m_FilterMethod;
+		
+		protected override void RefreshCommandSuggestions(List<CommandData> suggestedCommands)
+		{
+			if (m_FilterCommandData == null)
+			{
+				MethodInfo filterMethodInfo = this.GetType().GetMethod("CommandFilterChannel", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+				m_FilterCommandData = new CommandData(filterMethodInfo, "filter");
+				QuantumConsoleProcessor.TryAddCommand(m_FilterCommandData);
+			}
+
+			if (m_FilterMethod == null)
+			{
+				m_FilterMethod =  this.GetType().GetMethod("CommandFilterChannelWildcard", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+			}
+
+			string[] channels = LogChannel.GetAllChannelIds();
+			foreach (var channel in channels)
+			{
+				if (m_RegisteredFilterChannels.Contains(channel))
+					continue;
+				
+				m_RegisteredFilterChannels.Add(channel);
+				QuantumConsoleProcessor.TryAddCommand(new CommandData(m_FilterMethod, $"filter {channel}"));
+			}
+			
+			base.RefreshCommandSuggestions(suggestedCommands);
+		}
+
+
+		public void FilterChannel(LogChannel channel)
+		{
+			m_ExtensionChannelFilter.FilterChannel = channel;
+			m_ExtensionContainer.PushLogOverwrite(m_ExtensionChannelFilter);
+			RequireFlush();
+		}
+		
+		private void CommandFilterChannel(string channel)
+		{
+			FilterChannel(LogChannel.Get(channel));
+		}
+		private void CommandFilterChannelWildcard()
+		{
+		}
+#endif		
+
 		public void Back()
 		{
-			_extensionContainer.PopLogOverwrite();
+			m_ExtensionContainer.PopLogOverwrite();
 		}
 	}
 }

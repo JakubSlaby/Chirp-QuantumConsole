@@ -19,6 +19,20 @@ namespace WhiteSparrow.Integrations.QC
 			if (source == null)
 				return;
 
+			source = ConvertQuantumConsole(source);
+			
+			#if CHIRP
+			if (EditorUtility.DisplayDialog("Chirp Logging Framework Integration",
+				$"It appears you have the Chirp Logging Framework enabled in your project. Would you like to configure the console for it?",
+				"Yes", "Not Now"))
+			{
+				ChirpQuantumConsoleConfigurator.ConfigureForChirp(source);
+			}
+			#endif
+		}
+
+		internal static ChirpQuantumConsole ConvertQuantumConsole(QuantumConsole source)
+		{
 			ChirpQuantumConsole chirpConsole = null;
 			var allQuantumConsoleReferences = FindAllReferences(source);
 			var consoleReplacement = ReplaceQuantumConsole(source, out chirpConsole);
@@ -27,7 +41,10 @@ namespace WhiteSparrow.Integrations.QC
 			
 			EditorUtility.DisplayDialog("Chirp: Convert Quantum Console",
 				$"Quantum console update: {consoleReplacement},\nLog selector creation: {logSelector}", "Ok");
+			return chirpConsole;
 		}
+		
+
 
 		private enum ConsoleReplacementResult
 		{
@@ -200,5 +217,9 @@ namespace WhiteSparrow.Integrations.QC
 
 
 		#endregion
+		
+		
+		
+	
 	}
 }

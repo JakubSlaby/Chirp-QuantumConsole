@@ -1,7 +1,9 @@
-﻿using QFSW.QC;
+﻿#if CHIRP
+using QFSW.QC;
 using WhiteSparrow.Integrations.QC.Logging;
+using WhiteSparrow.Shared.Logging;
 
-namespace WhiteSparrow.Shared.Logging
+namespace WhiteSparrow.Integrations.QC
 {
 	public class QuantumConsoleLogger : AbstractLogger
 	{
@@ -28,3 +30,4 @@ namespace WhiteSparrow.Shared.Logging
 		}
 	}
 }
+#endif
