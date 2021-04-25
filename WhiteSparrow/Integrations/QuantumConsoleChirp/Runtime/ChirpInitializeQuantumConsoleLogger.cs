@@ -7,11 +7,7 @@ namespace WhiteSparrow.Integrations.QC
 	{
 		public override QuantumConsoleLogger GetInstance()
 		{
-#if CHIRP
 			return new QuantumConsoleLogger();
-#else
-			return null;
-#endif
 		}
 	}
 }

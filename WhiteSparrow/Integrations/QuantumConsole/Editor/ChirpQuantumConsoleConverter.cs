@@ -38,9 +38,10 @@ namespace WhiteSparrow.Integrations.QC
 			var consoleReplacement = ReplaceQuantumConsole(source, out chirpConsole);
 			ReplaceAllReferences(allQuantumConsoleReferences, chirpConsole);
 			var logSelector = AddLogSelectorComponent(chirpConsole);
+			var singletonUpdate = UpdateConsoleSingleton(chirpConsole);
 			
 			EditorUtility.DisplayDialog("Chirp: Convert Quantum Console",
-				$"Quantum console update: {consoleReplacement},\nLog selector creation: {logSelector}", "Ok");
+				$"Quantum console update: {consoleReplacement},\nLog selector creation: {logSelector}\nConsole set to Singleton Mode: {singletonUpdate}", "Ok");
 			return chirpConsole;
 		}
 		
@@ -169,6 +170,27 @@ namespace WhiteSparrow.Integrations.QC
 			return createdNew ? LogSelectorResult.Success : LogSelectorResult.Updated;
 		}
 
+		private enum ConsolePropertyUpdateResult
+		{
+			Success,
+			Updated,
+			UnableToUpdate
+		}
+
+		private static ConsolePropertyUpdateResult UpdateConsoleSingleton(QuantumConsole consoleInstance)
+		{
+			if (consoleInstance == null)
+				return ConsolePropertyUpdateResult.UnableToUpdate;
+			
+			SerializedObject serializedObject = new SerializedObject(consoleInstance);
+			SerializedProperty singleton = serializedObject.FindProperty("_singletonMode");
+			if (singleton.boolValue == true)
+				return ConsolePropertyUpdateResult.Updated;
+			singleton.boolValue = true;
+			serializedObject.ApplyModifiedPropertiesWithoutUndo();
+
+			return ConsolePropertyUpdateResult.Success;
+		}
 
 		#region Reference Replacement
 

@@ -14,6 +14,8 @@ namespace WhiteSparrow.Integrations.QC
 {
 	public class ChirpQuantumConsole : QFSW.QC.QuantumConsole
 	{
+		public const string Version = "0.1";
+		
 		private LogExtensionContainer m_ExtensionContainer;
 		internal LogExtensionContainer ExtensionContainer => m_ExtensionContainer;
 

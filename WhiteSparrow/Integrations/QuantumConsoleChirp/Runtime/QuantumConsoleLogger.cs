@@ -1,22 +1,22 @@
-﻿#if CHIRP
-using QFSW.QC;
-using WhiteSparrow.Integrations.QC.Logging;
+﻿using QFSW.QC;
+using UnityEngine;
 using WhiteSparrow.Shared.Logging;
 
 namespace WhiteSparrow.Integrations.QC
 {
+	
 	public class QuantumConsoleLogger : AbstractLogger
 	{
-		public override void Initialise()
+		public override void Initialize()
 		{
 		}
 
 		public override void Destroy()
 		{
 		}
-
 		public override void Append(LogEvent logEvent)
 		{
+			#if CHIRP
 			if (QuantumConsole.Instance == null)
 				return;
 			
@@ -27,7 +27,8 @@ namespace WhiteSparrow.Integrations.QC
 				StackTrace = logEvent.stackTrace
 			};
 			QuantumConsole.Instance.LogToConsole(detailedLog);
+			#endif
 		}
 	}
 }
-#endif
+

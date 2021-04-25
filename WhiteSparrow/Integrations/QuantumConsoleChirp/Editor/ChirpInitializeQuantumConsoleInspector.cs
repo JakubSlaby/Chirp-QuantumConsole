@@ -77,7 +77,7 @@ namespace WhiteSparrow.Integrations.QC
 			if (consoleInstance is ChirpQuantumConsole chirpQuantumInstance)
 			{
 				bool isValid = ChirpQuantumConsoleConfigurator.VerifyConfiguration(chirpQuantumInstance, out string error);
-
+				
 				if (isValid)
 				{
 					GUILayout.Label("Console instance has been found and is configured correctly.");
@@ -92,15 +92,7 @@ namespace WhiteSparrow.Integrations.QC
 						ChirpQuantumConsoleConfigurator.ConfigureForChirp(consoleInstance);
 					}
 				}
-				
-				
-				
-				
 			}
-			
 		}
-		
-		
-		
 	}
 }

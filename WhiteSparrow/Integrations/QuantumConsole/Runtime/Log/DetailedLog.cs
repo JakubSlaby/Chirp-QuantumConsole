@@ -1,6 +1,8 @@
 ﻿using QFSW.QC;
 using UnityEngine;
+#if CHIRP
 using WhiteSparrow.Shared.Logging;
+#endif
 
 namespace WhiteSparrow.Integrations.QC.Logging
 {

@@ -98,7 +98,9 @@ namespace WhiteSparrow.Integrations.QC.Formatting
 
 		protected virtual string FormatLogString(DetailedLog log, string logText)
 		{
-			return ChirpConsoleUtils.WrapTextColorByLevel(logText, log.Type, QuantumConsole.Instance.Theme);
+			if(QuantumConsole.Instance != null)
+				return ChirpConsoleUtils.WrapTextColorByLevel(logText, log.Type, QuantumConsole.Instance.Theme);
+			return logText;
 		}
 
 		protected virtual void FormatLogText(StringBuilder stringBuilder, ILog log)

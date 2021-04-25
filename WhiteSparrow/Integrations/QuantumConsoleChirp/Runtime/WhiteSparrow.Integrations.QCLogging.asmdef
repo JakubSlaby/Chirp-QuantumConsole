@@ -1,0 +1,17 @@
+{
+    "name": "WhiteSparrow.Integrations.QCLogging",
+    "references": [
+        "QFSW.QC",
+        "Unity.TextMeshPro",
+        "WhiteSparrow.Logging"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
