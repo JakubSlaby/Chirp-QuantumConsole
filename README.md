@@ -15,7 +15,7 @@ This package contains several standalone extensions to the [Quantum Console](htt
 - Unity version dependant on Quantum Console and Chirp Logging Framework.
 
 ## Installation
-To install Quantum Console extensions, go to [Releases](/releases) and download the latest `ChirpQuantumConsole_VERSION.unitypackage` and import it in your Unity project through `Assets/Import Package/Custom Package`.
+To install Quantum Console extensions, go to [Releases](https://github.com/JakubSlaby/Chirp-QuantumConsole/releases) and download the latest `ChirpQuantumConsole_VERSION.unitypackage` and import it in your Unity project through `Assets/Import Package/Custom Package`.
 
 After that all you need to do is to convert the default Quantum Console instance to Chirp Quantum Console instance. To do this, find your Quantum Console GameObject and right click on the QuantumConsole component - You should see a `Convert to Chirp` option. This will perform all the required settings.
 Keep in mind that the conversion process will set QuantumConsole to work in SingletonMode.
