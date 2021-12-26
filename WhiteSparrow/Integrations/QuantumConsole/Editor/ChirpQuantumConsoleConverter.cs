@@ -21,14 +21,14 @@ namespace WhiteSparrow.Integrations.QC
 
 			source = ConvertQuantumConsole(source);
 			
-			#if CHIRP
-			if (EditorUtility.DisplayDialog("Chirp Logging Framework Integration",
-				$"It appears you have the Chirp Logging Framework enabled in your project. Would you like to configure the console for it?",
-				"Yes", "Not Now"))
-			{
-				ChirpQuantumConsoleConfigurator.ConfigureForChirp(source);
-			}
-			#endif
+			// #if CHIRP
+			// if (EditorUtility.DisplayDialog("Chirp Logging Framework Integration",
+			// 	$"It appears you have the Chirp Logging Framework enabled in your project. Would you like to configure the console for it?",
+			// 	"Yes", "Not Now"))
+			// {
+			// 	ChirpQuantumConsoleConfigurator.ConfigureForChirp(source);
+			// }
+			// #endif
 		}
 
 		internal static ChirpQuantumConsole ConvertQuantumConsole(QuantumConsole source)

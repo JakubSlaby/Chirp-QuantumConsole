@@ -14,23 +14,19 @@ namespace WhiteSparrow.Integrations.QC
 {
 	public class ChirpQuantumConsole : QFSW.QC.QuantumConsole
 	{
-		public const string Version = "0.1";
+		public const string Version = "0.2";
 		
 		private LogExtensionContainer m_ExtensionContainer;
 		internal LogExtensionContainer ExtensionContainer => m_ExtensionContainer;
 
 		private SearchLogExtension m_ExtensionSearch;
 		private LogDetailsExtension m_ExtensionLogDetails;
-#if CHIRP
-		private ChannelFilterLogExtension m_ExtensionChannelFilter;
-#endif
+
 		protected override ILogStorage CreateLogStorage()
 		{
 			m_ExtensionSearch = new SearchLogExtension();
 			m_ExtensionLogDetails = new LogDetailsExtension();
-#if CHIRP
-			m_ExtensionChannelFilter = new ChannelFilterLogExtension();
-#endif
+
 			return m_ExtensionContainer = new LogExtensionContainer(MaxStoredLogs);
 		}
 
@@ -103,54 +99,21 @@ namespace WhiteSparrow.Integrations.QC
 			RequireFlush();
 		}
 
-#if CHIRP
-		private HashSet<string> m_RegisteredFilterChannels = new HashSet<string>();
-		private CommandData m_FilterCommandData;
-		private MethodInfo m_FilterMethod;
-		
-		protected override void RefreshCommandSuggestions(List<CommandData> suggestedCommands)
+		internal new void RequireFlush()
 		{
-			if (m_FilterCommandData == null)
-			{
-				MethodInfo filterMethodInfo = this.GetType().GetMethod("CommandFilterChannel", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-				m_FilterCommandData = new CommandData(filterMethodInfo, "filter");
-				QuantumConsoleProcessor.TryAddCommand(m_FilterCommandData);
-			}
-
-			if (m_FilterMethod == null)
-			{
-				m_FilterMethod =  this.GetType().GetMethod("CommandFilterChannelWildcard", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-			}
-
-			string[] channels = LogChannel.GetAllChannelIds();
-			foreach (var channel in channels)
-			{
-				if (m_RegisteredFilterChannels.Contains(channel))
-					continue;
-				
-				m_RegisteredFilterChannels.Add(channel);
-				QuantumConsoleProcessor.TryAddCommand(new CommandData(m_FilterMethod, $"filter {channel}"));
-			}
-			
-			base.RefreshCommandSuggestions(suggestedCommands);
+			base.RequireFlush();
 		}
 
-
-		public void FilterChannel(LogChannel channel)
-		{
-			m_ExtensionChannelFilter.FilterChannel = channel;
-			m_ExtensionContainer.PushLogOverwrite(m_ExtensionChannelFilter);
-			RequireFlush();
-		}
-		
-		private void CommandFilterChannel(string channel)
-		{
-			FilterChannel(LogChannel.Get(channel));
-		}
-		private void CommandFilterChannelWildcard()
-		{
-		}
-#endif		
+// #if CHIRP
+//
+// 		public void FilterChannel(LogChannel channel)
+// 		{
+// 			m_ExtensionChannelFilter.FilterChannel = channel;
+// 			m_ExtensionContainer.PushLogOverwrite(m_ExtensionChannelFilter);
+// 			RequireFlush();
+// 		}
+// 		
+// #endif		
 
 		public void Back()
 		{
