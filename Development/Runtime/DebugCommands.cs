@@ -44,5 +44,16 @@ namespace WhiteSparrow.Integrations.QC.Commands
 				await Task.Delay(100);
 			}
 		}
+		#if CHIRP
+		[Command()]
+		private static async Task LogTimes(int count, string channel)
+		{
+			while (count-- > 0)
+			{
+				Chirp.LogCh(channel, GetRandomLipsum());
+				await Task.Delay(100);
+			}
+		}
+		#endif
 	}
 }

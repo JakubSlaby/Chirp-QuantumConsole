@@ -1,5 +1,6 @@
-﻿using QFSW.QC;
-using UnityEngine;
+﻿#if CHIRP
+using QFSW.QC;
+using WhiteSparrow.Integrations.QC.Logging;
 using WhiteSparrow.Shared.Logging;
 
 namespace WhiteSparrow.Integrations.QC
@@ -31,4 +32,4 @@ namespace WhiteSparrow.Integrations.QC
 		}
 	}
 }
-
+#endif

@@ -3,7 +3,8 @@
     "references": [
         "QFSW.QC",
         "Unity.TextMeshPro",
-        "WhiteSparrow.Logging"
+        "WhiteSparrow.Logging",
+        "WhiteSparrow.Integrations.QC"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

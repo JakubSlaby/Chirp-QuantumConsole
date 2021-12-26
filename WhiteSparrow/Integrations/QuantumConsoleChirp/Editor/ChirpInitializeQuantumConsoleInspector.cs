@@ -1,10 +1,13 @@
-﻿using QFSW.QC;
+﻿
+using QFSW.QC;
 using UnityEditor;
 using UnityEngine;
 
 namespace WhiteSparrow.Integrations.QC
 {
+#if CHIRP
 	[CustomEditor(typeof(ChirpInitializeQuantumConsoleLogger))]
+#endif
 	public class ChirpInitializeQuantumConsoleInspector : Editor
 	{
 		private static class Styles

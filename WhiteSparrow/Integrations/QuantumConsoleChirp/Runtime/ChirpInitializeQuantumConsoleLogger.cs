@@ -1,4 +1,6 @@
-﻿using WhiteSparrow.Shared.Logging.Initialize;
+﻿#if CHIRP
+
+using WhiteSparrow.Shared.Logging.Initialize;
 
 namespace WhiteSparrow.Integrations.QC
 {
@@ -11,3 +13,4 @@ namespace WhiteSparrow.Integrations.QC
 		}
 	}
 }
+#endif
